@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AllRashed | GTA 6 Hub</title>
+  <meta name="description" content="The AllRashed destination for GTA 6 news, guides, the interactive map, characters, and vehicle database." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23030305'/%3E%3Ctext x='32' y='44' font-size='30' font-family='Arial,Helvetica,sans-serif' font-weight='900' fill='%23ff2d55' text-anchor='middle'%3E6%3C/text%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vice: { dark: '#030305', card: '#11111a', accent: '#ff2d55', gold: '#ffcc00' }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Oswald:wght@400;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #030305;
+      color: #f5f5f7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-display {
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #ff2d55 0%, #ff9500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .glow-pink {
+      box-shadow: 0 0 40px rgba(255, 45, 85, 0.35);
+    }
+
+    .glow-gold {
+      box-shadow: 0 0 30px rgba(255, 204, 0, 0.25);
+    }
+
+    .card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(255, 45, 85, 0.12);
+    }
+
+    .map-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      animation: pulse-pin 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-pin {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.6;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0a0f;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ff2d55;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff5e7d;
+    }
+
+    .stat-bar-bg {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 8px;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ff2d55, #ff9500);
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* single-file page switching */
+    .site-page { display: none; }
+    .site-page.active { display: block; }
+    .nav-link.active-link { color: #ffffff; }
+  </style>
+</head>
+<body class="min-h-screen bg-vice-dark">
+
+  <!-- Navbar -->
+  <nav class="fixed w-full z-50 bg-vice-dark/80 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a onclick="showPage('home')" class="flex items-center gap-2 cursor-pointer">
+          <i data-lucide="gamepad-2" class="w-8 h-8 text-vice-accent"></i>
+          <span class="font-display text-2xl font-bold tracking-wider">ALLRASHED</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a onclick="showPage('home')" id="nav-home" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">Home</a>
+          <a onclick="showPage('news')" id="nav-news" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">News</a>
+          <a onclick="showPage('guides')" id="nav-guides" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">Guides</a>
+          <a onclick="showPage('map')" id="nav-map" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">Map</a>
+          <a onclick="showPage('characters')" id="nav-characters" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">Characters</a>
+          <a onclick="showPage('vehicles')" id="nav-vehicles" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">Vehicles</a>
+          <a onclick="showPage('gallery')" id="nav-gallery" class="nav-link cursor-pointer text-sm font-semibold text-gray-300 hover:text-vice-accent transition">Gallery & Leaks</a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md hover:bg-white/5">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-vice-card border-t border-white/5">
+      <div class="px-4 py-3 space-y-1">
+        <a onclick="showPage('home')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">Home</a>
+        <a onclick="showPage('news')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">News</a>
+        <a onclick="showPage('guides')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">Guides</a>
+        <a onclick="showPage('map')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">Map</a>
+        <a onclick="showPage('characters')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">Characters</a>
+        <a onclick="showPage('vehicles')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">Vehicles</a>
+        <a onclick="showPage('gallery')" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-white/5 cursor-pointer">Gallery & Leaks</a>
+      </div>
+    </div>
+  </nav>
+
+<!-- ============ HOME PAGE ============ -->
+<div class="site-page active" id="page-home">
+
+  <!-- Hero -->
+  <section class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="http://static.photos/cityscape/1200x630/42" alt="Vice City skyline" class="w-full h-full object-cover opacity-25" />
+      <div class="absolute inset-0 bg-gradient-to-b from-vice-dark/60 via-vice-dark/90 to-vice-dark"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(255,45,85,0.15),transparent_60%)]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-vice-accent/10 border border-vice-accent/20 text-vice-accent text-sm font-semibold mb-8 reveal">
+        <span class="w-2 h-2 rounded-full bg-vice-accent animate-pulse"></span>
+        LIVE UPDATES ACTIVE
+      </div>
+      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-bold mb-6 leading-[0.9] reveal">
+        <span class="text-gradient">GRAND THEFT</span><br />
+        <span class="text-white">AUTO VI</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed reveal">
+        The definitive AllRashed destination for verified updates, deep-dive guides, and interactive tools for Rockstar Games' next chapter in Leonida.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center reveal">
+        <a onclick="showPage('news')" class="cursor-pointer px-8 py-4 bg-vice-accent text-white font-bold rounded-lg hover:bg-rose-600 transition glow-pink inline-flex items-center justify-center gap-2">
+          <i data-lucide="newspaper" class="w-5 h-5"></i> Latest News
+        </a>
+        <a onclick="showPage('map')" class="cursor-pointer px-8 py-4 bg-vice-card border border-white/10 text-white font-bold rounded-lg hover:bg-white/5 transition inline-flex items-center justify-center gap-2">
+          <i data-lucide="map" class="w-5 h-5"></i> Explore Map
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trailer -->
+  <section class="py-20 md:py-28 px-4 max-w-6xl mx-auto">
+    <div class="text-center mb-10">
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-3 text-gradient reveal">Watch the Reveal Trailer</h2>
+      <p class="text-gray-400 max-w-xl mx-auto reveal">Rockstar Games' official Trailer 1 &mdash; the most-viewed game reveal in YouTube history.</p>
+    </div>
+    <div class="relative w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl glow-pink reveal" style="aspect-ratio: 16/9;">
+      <iframe
+        class="absolute inset-0 w-full h-full"
+        src="https://www.youtube.com/embed/QdBZY2fkU-0"
+        title="Grand Theft Auto VI Trailer 1"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
+
+  <!-- Countdown -->
+  <section class="py-16 md:py-24 border-y border-white/5 bg-vice-card/20 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="font-display text-3xl md:text-4xl mb-2 text-white reveal">RELEASE COUNTDOWN</h2>
+      <p class="text-gray-400 mb-10 reveal">November 19, 2026 &mdash; PS5 &amp; Xbox Series X|S</p>
+      <div id="countdown" class="flex flex-wrap justify-center gap-4 md:gap-8 reveal"></div>
+    </div>
+  </section>
+
+  <!-- Latest News -->
+  <section class="py-24 px-4 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+      <div>
+        <h2 class="font-display text-4xl font-bold mb-2 text-gradient reveal">Latest Intel</h2>
+        <p class="text-gray-400 reveal">Breaking news, verified leaks, and official announcements.</p>
+      </div>
+      <a onclick="showPage('news')" class="cursor-pointer inline-flex items-center gap-2 text-vice-accent font-semibold hover:underline reveal">
+        View All <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <article class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-48 overflow-hidden">
+          <img src="http://static.photos/gaming/640x360/1" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Official</span>
+          <h3 class="text-xl font-bold mt-2 mb-3 group-hover:text-vice-accent transition">Release Date Confirmed: November 19, 2026</h3>
+          <p class="text-gray-400 text-sm mb-4 line-clamp-2">Rockstar Games has locked in the global launch date for PS5 and Xbox Series X|S.</p>
+          <div class="flex items-center gap-4 text-xs text-gray-500">
+            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> Ongoing</span>
+            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 3 min</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-48 overflow-hidden">
+          <img src="http://static.photos/technology/640x360/2" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Confirmed</span>
+          <h3 class="text-xl font-bold mt-2 mb-3 group-hover:text-vice-accent transition">Official Cover Art Revealed</h3>
+          <p class="text-gray-400 text-sm mb-4 line-clamp-2">Rockstar unveiled the official box art on June 18, 2026, kicking off the final marketing push toward launch.</p>
+          <div class="flex items-center gap-4 text-xs text-gray-500">
+            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> June 18, 2026</span>
+            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 5 min</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-48 overflow-hidden">
+          <img src="http://static.photos/nature/640x360/3" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Confirmed</span>
+          <h3 class="text-xl font-bold mt-2 mb-3 group-hover:text-vice-accent transition">Pre-Orders Open June 25, 2026</h3>
+          <p class="text-gray-400 text-sm mb-4 line-clamp-2">Digital pre-orders go live across PlayStation Store, Xbox Store, and select retailers.</p>
+          <div class="flex items-center gap-4 text-xs text-gray-500">
+            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> June 25, 2026</span>
+            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 4 min</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Featured Guides -->
+  <section class="py-24 px-4 max-w-7xl mx-auto border-t border-white/5">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+      <div>
+        <h2 class="font-display text-4xl font-bold mb-2 text-gradient reveal">Field Guides</h2>
+        <p class="text-gray-400 reveal">Master Leonida before you even land.</p>
+      </div>
+      <a onclick="showPage('guides')" class="cursor-pointer inline-flex items-center gap-2 text-vice-accent font-semibold hover:underline reveal">
+        All Guides <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <a onclick="showPage('guides')" class="cursor-pointer group block p-6 bg-vice-card rounded-xl border border-white/5 card-hover reveal">
+        <div class="w-12 h-12 rounded-lg bg-vice-accent/10 flex items-center justify-center mb-4 text-vice-accent">
+          <i data-lucide="compass" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 group-hover:text-vice-accent transition">Beginner's Survival</h3>
+        <p class="text-gray-400 text-sm mb-4">Essential tips for your first 24 hours in Vice City.</p>
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Beginner</span>
+      </a>
+
+      <a onclick="showPage('guides')" class="cursor-pointer group block p-6 bg-vice-card rounded-xl border border-white/5 card-hover reveal">
+        <div class="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4 text-amber-500">
+          <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 group-hover:text-amber-500 transition">Money Making Blueprint</h3>
+        <p class="text-gray-400 text-sm mb-4">Legal (and not-so-legal) methods to build your empire fast.</p>
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Advanced</span>
+      </a>
+
+      <a onclick="showPage('guides')" class="cursor-pointer group block p-6 bg-vice-card rounded-xl border border-white/5 card-hover reveal">
+        <div class="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4 text-emerald-500">
+          <i data-lucide="eye-off" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-500 transition">Hidden Collectibles</h3>
+        <p class="text-gray-400 text-sm mb-4">Weapon caches, easter eggs, and secret stashes mapped.</p>
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Secrets</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Screenshot Gallery -->
+  <section class="py-24 px-4 max-w-7xl mx-auto border-t border-white/5">
+    <div class="text-center mb-12">
+      <h2 class="font-display text-4xl font-bold mb-2 text-gradient reveal">Visual Showcase</h2>
+      <p class="text-gray-400 max-w-xl mx-auto reveal">A look at the world of Leonida &mdash; curated scenery, vehicles, and city life.</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/cityscape/640x360/61" alt="Vice City skyline at dusk" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Skyline at Dusk</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/automotive/640x360/62" alt="Sports car on a highway" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Coastal Highway</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/nature/640x360/63" alt="Swamplands of Grassrivers" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Grassrivers Wetlands</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/technology/640x360/64" alt="Neon arcade district" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Neon District</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/cityscape/640x360/65" alt="Port Llano docks" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Port Llano Docks</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/nature/640x360/66" alt="Leonida Keys beachfront" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Leonida Keys</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/automotive/640x360/67" alt="Muscle car at sunset" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Sunset Cruise</span>
+      </div>
+      <div class="relative h-48 md:h-64 rounded-xl overflow-hidden group reveal">
+        <img src="http://static.photos/cityscape/640x360/68" alt="Ambrosia suburbs" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-xs font-bold text-white">Ambrosia Suburbs</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- By The Numbers -->
+  <section class="py-20 px-4 max-w-7xl mx-auto border-t border-white/5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div class="reveal">
+        <div class="font-display text-4xl md:text-5xl font-bold text-gradient mb-2">2</div>
+        <div class="text-gray-400 text-sm uppercase tracking-wider">Playable Protagonists</div>
+      </div>
+      <div class="reveal">
+        <div class="font-display text-4xl md:text-5xl font-bold text-gradient mb-2">5+</div>
+        <div class="text-gray-400 text-sm uppercase tracking-wider">Distinct Regions</div>
+      </div>
+      <div class="reveal">
+        <div class="font-display text-4xl md:text-5xl font-bold text-gradient mb-2">12+</div>
+        <div class="text-gray-400 text-sm uppercase tracking-wider">Years Since Vice City</div>
+      </div>
+      <div class="reveal">
+        <div class="font-display text-4xl md:text-5xl font-bold text-gradient mb-2">Nov 19</div>
+        <div class="text-gray-400 text-sm uppercase tracking-wider">2026 Launch Date</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ NEWS PAGE ============ -->
+<div class="site-page" id="page-news">
+  <main class="pt-24 pb-24 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-gradient mb-4">News & Updates</h1>
+      <p class="text-gray-400 max-w-xl mx-auto">Verified intel, official press releases, and community rumors &mdash; all filtered for clarity.</p>
+    </div>
+
+    <div id="news-filters" class="flex flex-wrap justify-center gap-2 mb-12 reveal">
+      <button data-filter="all" onclick="filterItems('all','news-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-accent text-white transition">All</button>
+      <button data-filter="official" onclick="filterItems('official','news-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Official</button>
+      <button data-filter="rumor" onclick="filterItems('rumor','news-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Rumors</button>
+      <button data-filter="leak" onclick="filterItems('leak','news-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Leaks</button>
+    </div>
+
+    <div id="news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <article data-category="official" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/gaming/640x360/11" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Official</span>
+            <span class="text-xs text-gray-500">Ongoing</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-vice-accent transition">Release Date Confirmed: November 19, 2026</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">After two delays from its original announced window, GTA VI is now locked for November 19, 2026, on PS5 and Xbox Series X|S. No PC date has been confirmed.</p>
+        </div>
+      </article>
+
+      <article data-category="official" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/technology/640x360/12" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Official</span>
+            <span class="text-xs text-gray-500">June 18, 2026</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-vice-accent transition">Rockstar Reveals Official Cover Art</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">The official box art dropped June 18, 2026, marking the start of the final pre-launch marketing campaign.</p>
+        </div>
+      </article>
+
+      <article data-category="official" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/cityscape/640x360/13" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Official</span>
+            <span class="text-xs text-gray-500">June 25, 2026</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-vice-accent transition">Pre-Orders Open Across PS5 & Xbox</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">Digital pre-orders went live June 25, 2026, on PlayStation Store, Xbox Store, and select physical retailers.</p>
+        </div>
+      </article>
+
+      <article data-category="rumor" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/technology/640x360/14" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">Rumor</span>
+            <span class="text-xs text-gray-500">Unverified</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-amber-500 transition">Interior Gameplay Speculation Intensifies</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">Unverified industry chatter claims many Vice City buildings will have enterable interiors. Not confirmed by Rockstar.</p>
+        </div>
+      </article>
+
+      <article data-category="leak" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/15" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20">Leak</span>
+            <span class="text-xs text-gray-500">Unverified</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-rose-500 transition">Map Sizing Data Mined</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">Unverified comparative analysis suggests Leonida's explorable landmass could exceed Los Santos. Treat as speculation.</p>
+        </div>
+      </article>
+
+      <article data-category="leak" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/nature/640x360/16" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20">Leak</span>
+            <span class="text-xs text-gray-500">Unverified</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-rose-500 transition">PC Release Still Unconfirmed</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">No PC storefront, date, or system requirements have been announced. Console launches have historically preceded PC by 12&ndash;18 months.</p>
+        </div>
+      </article>
+
+      <article data-category="official" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/technology/640x360/17" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Official</span>
+            <span class="text-xs text-gray-500">Ongoing</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-vice-accent transition">Rockstar Confirms Trailer Schedule</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">A staggered marketing rollout is expected between now and launch, with gameplay deep-dives planned in the final months before November.</p>
+        </div>
+      </article>
+
+      <article data-category="rumor" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/cityscape/640x360/18" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">Rumor</span>
+            <span class="text-xs text-gray-500">Unverified</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-amber-500 transition">Online Mode Details Expected at Launch Window</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">Community speculation points to a separate online component following the single-player launch, similar to past entries. Nothing official yet.</p>
+        </div>
+      </article>
+
+      <article data-category="leak" class="group bg-vice-card rounded-xl overflow-hidden border border-white/5 card-hover reveal">
+        <div class="h-52 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/19" alt="News" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20">Leak</span>
+            <span class="text-xs text-gray-500">Unverified</span>
+          </div>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-rose-500 transition">Vehicle Customization Footage Surfaces</h3>
+          <p class="text-gray-400 text-sm line-clamp-3">Unverified clips suggest an expanded garage and customization system. Treat as speculation until Rockstar confirms.</p>
+        </div>
+      </article>
+    </div>
+  </main>
+</div>
+
+<!-- ============ GUIDES PAGE ============ -->
+<div class="site-page" id="page-guides">
+  <main class="pt-24 pb-24 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-10 reveal">
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-gradient mb-4">Field Guides</h1>
+      <p class="text-gray-400 max-w-xl mx-auto">Strategies, walkthroughs, and deep-dive systems analysis for Leonida newcomers and veterans.</p>
+    </div>
+
+    <div class="max-w-xl mx-auto mb-10 reveal">
+      <div class="relative">
+        <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"></i>
+        <input id="guide-search" type="text" placeholder="Search guides..." class="w-full pl-12 pr-4 py-3 bg-vice-card border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-vice-accent transition" />
+      </div>
+    </div>
+
+    <div id="guides-filters" class="flex flex-wrap justify-center gap-2 mb-12 reveal">
+      <button data-filter="all" onclick="filterItems('all','guides-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-accent text-white transition">All</button>
+      <button data-filter="beginner" onclick="filterItems('beginner','guides-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Beginner</button>
+      <button data-filter="money" onclick="filterItems('money','guides-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Money</button>
+      <button data-filter="story" onclick="filterItems('story','guides-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Story</button>
+      <button data-filter="secrets" onclick="filterItems('secrets','guides-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Secrets</button>
+    </div>
+
+    <div id="guides-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div data-category="beginner" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Beginner</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 8 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-vice-accent transition cursor-pointer">First 24 Hours in Vice City</h3>
+        <p class="text-gray-400 text-sm mb-4">What to prioritize when you step off the plane: safehouses, early contacts, and avoiding the wanted loop.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Easy</span>
+        </div>
+      </div>
+
+      <div data-category="money" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">Money</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 12 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-amber-500 transition cursor-pointer">Empire Building for Solo Players</h3>
+        <p class="text-gray-400 text-sm mb-4">Laundering, property acquisition, and front-business mechanics explained from day one.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <span class="text-xs text-gray-500 ml-2">Hard</span>
+        </div>
+      </div>
+
+      <div data-category="story" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">Story</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 15 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-purple-400 transition cursor-pointer">Branching Narrative Explained</h3>
+        <p class="text-gray-400 text-sm mb-4">How your choices between Lucia and Jason's paths affect missions, loyalty, and the finale.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Medium</span>
+        </div>
+      </div>
+
+      <div data-category="secrets" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Secrets</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 6 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-emerald-500 transition cursor-pointer">Hidden Weapon Caches</h3>
+        <p class="text-gray-400 text-sm mb-4">Every known free weapon location mapped early &mdash; no purchase required.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Easy</span>
+        </div>
+      </div>
+
+      <div data-category="beginner" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Beginner</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 5 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-cyan-400 transition cursor-pointer">Police Evasion 101</h3>
+        <p class="text-gray-400 text-sm mb-4">How the new heat system works compared to Los Santos and the best escape routes.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Easy</span>
+        </div>
+      </div>
+
+      <div data-category="secrets" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Secrets</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 20 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-emerald-500 transition cursor-pointer">Easter Eggs & Pop-Culture References</h3>
+        <p class="text-gray-400 text-sm mb-4">A running list of callbacks, secrets, and bizarre world detail uncovered by the community.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <span class="text-xs text-gray-500 ml-2">Hard</span>
+        </div>
+      </div>
+
+      <div data-category="money" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="h-32 -m-6 mb-4 overflow-hidden rounded-t-xl">
+          <img src="http://static.photos/finance/640x360/71" alt="Money guide" class="w-full h-full object-cover" />
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">Money</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 10 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-amber-500 transition cursor-pointer">Property Investment Walkthrough</h3>
+        <p class="text-gray-400 text-sm mb-4">Which safehouses and businesses to prioritize purchasing first for the best long-term return.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Medium</span>
+        </div>
+      </div>
+
+      <div data-category="story" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="h-32 -m-6 mb-4 overflow-hidden rounded-t-xl">
+          <img src="http://static.photos/people/640x360/72" alt="Story guide" class="w-full h-full object-cover" />
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">Story</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 18 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-purple-400 transition cursor-pointer">Relationship & Loyalty Systems</h3>
+        <p class="text-gray-400 text-sm mb-4">How trust between Lucia, Jason, and the supporting cast may shape mission availability and endings.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Medium</span>
+        </div>
+      </div>
+
+      <div data-category="beginner" class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="h-32 -m-6 mb-4 overflow-hidden rounded-t-xl">
+          <img src="http://static.photos/technology/640x360/73" alt="Beginner guide" class="w-full h-full object-cover" />
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Beginner</span>
+          <span class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 7 min</span>
+        </div>
+        <h3 class="guide-card text-xl font-bold mb-3 hover:text-cyan-400 transition cursor-pointer">Controls & Settings Optimization</h3>
+        <p class="text-gray-400 text-sm mb-4">Recommended camera, aim-assist, and accessibility settings for new players on PS5 and Xbox Series X|S.</p>
+        <div class="flex items-center gap-1">
+          <i data-lucide="star" class="w-4 h-4 text-vice-gold fill-current"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <i data-lucide="star" class="w-4 h-4 text-gray-700"></i>
+          <span class="text-xs text-gray-500 ml-2">Easy</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ MAP PAGE ============ -->
+<div class="site-page" id="page-map">
+  <main class="pt-24 pb-24 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-10 reveal">
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-gradient mb-4">Leonida Intelligence Map</h1>
+      <p class="text-gray-400 max-w-xl mx-auto">Explore key regions of GTA 6's map. Click any node to pull region data.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Map Area -->
+      <div class="lg:col-span-2">
+        <div class="relative w-full h-[500px] md:h-[600px] bg-[#050a14] rounded-2xl border border-white/10 overflow-hidden shadow-2xl reveal">
+          <!-- Ocean effect -->
+          <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 30% 40%, rgba(56, 189, 248, 0.15), transparent 50%), radial-gradient(circle at 80% 70%, rgba(56, 189, 248, 0.1), transparent 40%);"></div>
+
+          <!-- Landmass hint -->
+          <div class="absolute top-1/2 left-1/2 w-[70%] h-[75%] -translate-x-1/2 -translate-y-1/2 bg-emerald-900/20 rounded-[40%_60%_70%_30%/60%_30%_70%_40%] blur-3xl"></div>
+
+          <!-- Roads / connectors -->
+          <div class="absolute top-[30%] left-[25%] w-[40%] h-[2px] bg-white/10 rotate-[25deg]"></div>
+          <div class="absolute top-[45%] left-[40%] w-[30%] h-[2px] bg-white/10 rotate-[-15deg]"></div>
+          <div class="absolute top-[60%] left-[30%] w-[35%] h-[2px] bg-white/10 rotate-[10deg]"></div>
+
+          <!-- Vice City -->
+          <button onclick="showMapLocation('vice-city')" class="absolute top-[35%] left-[55%] group" aria-label="Vice City">
+            <div class="relative">
+              <div class="w-4 h-4 bg-vice-accent rounded-full ring-4 ring-vice-accent/30 map-pin"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 top-6 opacity-0 group-hover:opacity-100 transition bg-vice-card px-2 py-1 rounded border border-white/10 text-xs whitespace-nowrap">Vice City</div>
+            </div>
+          </button>
+
+          <!-- Grassrivers -->
+          <button onclick="showMapLocation('grassrivers')" class="absolute top-[55%] left-[35%] group" aria-label="Grassrivers">
+            <div class="relative">
+              <div class="w-4 h-4 bg-emerald-400 rounded-full ring-4 ring-emerald-400/30 map-pin" style="animation-delay: 0.5s"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 top-6 opacity-0 group-hover:opacity-100 transition bg-vice-card px-2 py-1 rounded border border-white/10 text-xs whitespace-nowrap">Grassrivers</div>
+            </div>
+          </button>
+
+          <!-- Port Llano -->
+          <button onclick="showMapLocation('port-llano')" class="absolute top-[70%] left-[45%] group" aria-label="Port Llano">
+            <div class="relative">
+              <div class="w-4 h-4 bg-amber-400 rounded-full ring-4 ring-amber-400/30 map-pin" style="animation-delay: 1s"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 top-6 opacity-0 group-hover:opacity-100 transition bg-vice-card px-2 py-1 rounded border border-white/10 text-xs whitespace-nowrap">Port Llano</div>
+            </div>
+          </button>
+
+          <!-- Leonida Keys -->
+          <button onclick="showMapLocation('leonida-keys')" class="absolute top-[60%] left-[75%] group" aria-label="Leonida Keys">
+            <div class="relative">
+              <div class="w-4 h-4 bg-cyan-400 rounded-full ring-4 ring-cyan-400/30 map-pin" style="animation-delay: 1.5s"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 top-6 opacity-0 group-hover:opacity-100 transition bg-vice-card px-2 py-1 rounded border border-white/10 text-xs whitespace-nowrap">Leonida Keys</div>
+            </div>
+          </button>
+
+          <!-- Ambrosia -->
+          <button onclick="showMapLocation('ambrosia')" class="absolute top-[20%] left-[40%] group" aria-label="Ambrosia">
+            <div class="relative">
+              <div class="w-4 h-4 bg-purple-400 rounded-full ring-4 ring-purple-400/30 map-pin" style="animation-delay: 0.3s"></div>
+              <div class="absolute left-1/2 -translate-x-1/2 top-6 opacity-0 group-hover:opacity-100 transition bg-vice-card px-2 py-1 rounded border border-white/10 text-xs whitespace-nowrap">Ambrosia</div>
+            </div>
+          </button>
+
+          <!-- Compass decoration -->
+          <div class="absolute top-4 right-4 text-white/20">
+            <i data-lucide="compass" class="w-10 h-10"></i>
+          </div>
+
+          <!-- Legend -->
+          <div class="absolute bottom-4 left-4 bg-vice-card/80 backdrop-blur border border-white/10 rounded-lg px-3 py-2 text-xs text-gray-300 space-y-1">
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-vice-accent"></span> Urban</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Rural</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Industrial</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> Water</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="lg:col-span-1">
+        <div class="bg-vice-card rounded-2xl border border-white/10 p-6 md:p-8 h-full reveal">
+          <div id="map-info">
+            <div class="flex flex-col items-center justify-center h-full text-center py-12">
+              <i data-lucide="map" class="w-16 h-16 text-white/10 mb-4"></i>
+              <p class="text-gray-500">Select a region on the map to view intelligence.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ CHARACTERS PAGE ============ -->
+<div class="site-page" id="page-characters">
+  <main class="pt-24 pb-24 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-gradient mb-4">Protagonists & Key Players</h1>
+      <p class="text-gray-400 max-w-xl mx-auto">The criminals, conspirators, and power brokers shaping Leonida's underworld.</p>
+    </div>
+
+    <!-- Lucia -->
+    <div class="grid lg:grid-cols-2 gap-8 mb-16 reveal">
+      <div class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden border border-white/10">
+        <img src="http://static.photos/people/640x360/21" alt="Lucia placeholder" class="w-full h-full object-cover grayscale contrast-125" />
+        <div class="absolute inset-0 bg-gradient-to-t from-vice-dark via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6">
+          <span class="px-3 py-1 rounded-full bg-vice-accent/20 border border-vice-accent/30 text-vice-accent text-xs font-bold uppercase">Protagonist</span>
+        </div>
+      </div>
+      <div class="flex flex-col justify-center">
+        <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Lucia</h2>
+        <p class="text-gray-400 mb-4 leading-relaxed">
+          The lead protagonist and the driving force behind much of GTA 6's narrative. Described as sharp, calculating, and fiercely loyal to those she trusts. Her story arc intertwines romance, crime, and survival in a modern Vice City underbelly.
+        </p>
+        <p class="text-gray-400 mb-8 leading-relaxed">
+          Raised in Leonida and hardened by a series of setbacks early in life, Lucia enters the story fresh off a stint that taught her how to read people, talk her way out of trouble, and pull a trigger when talking fails. Her partnership with Jason starts as a means of survival and evolves into the emotional core of the game.
+        </p>
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Shooting</span><span>80%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 80%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Driving</span><span>75%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 75%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Stealth</span><span>90%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 90%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Hacking</span><span>65%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 65%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jason -->
+    <div class="grid lg:grid-cols-2 gap-8 mb-16 reveal">
+      <div class="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden border border-white/10 lg:order-2">
+        <img src="http://static.photos/people/640x360/22" alt="Jason placeholder" class="w-full h-full object-cover grayscale contrast-125" />
+        <div class="absolute inset-0 bg-gradient-to-t from-vice-dark via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6">
+          <span class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-500 text-xs font-bold uppercase">Protagonist</span>
+        </div>
+      </div>
+      <div class="flex flex-col justify-center lg:order-1">
+        <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Jason</h2>
+        <p class="text-gray-400 mb-4 leading-relaxed">
+          Lucia's partner in crime and the second playable protagonist. Jason brings physical dominance and street-level connections to the duo's operation. His background in motor clubs provides early access to high-performance vehicles and smuggling routes.
+        </p>
+        <p class="text-gray-400 mb-8 leading-relaxed">
+          A former mechanic with a temper that's gotten him into more trouble than he'd like to admit, Jason knows Vice City's underground motor culture inside and out. His loyalty to Lucia is unwavering, but his impulsiveness is often the spark that turns a clean job into chaos.
+        </p>
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Shooting</span><span>70%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 70%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Driving</span><span>95%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 95%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Strength</span><span>85%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 85%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1 text-sm font-semibold"><span>Flying</span><span>60%</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 60%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supporting Cast -->
+    <h3 class="font-display text-3xl font-bold mb-8 text-center reveal">Supporting Cast</h3>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/10">
+          <img src="http://static.photos/people/320x240/31" alt="NPC" class="w-full h-full object-cover grayscale" />
+        </div>
+        <h4 class="text-lg font-bold mb-1">Cal Hampton</h4>
+        <p class="text-xs text-vice-accent uppercase font-bold mb-3">Fixer</p>
+        <p class="text-gray-400 text-sm">Underground contact who brokers jobs between crews and the wealthy elite of Vice Beach.</p>
+      </div>
+      <div class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/10">
+          <img src="http://static.photos/people/320x240/32" alt="NPC" class="w-full h-full object-cover grayscale" />
+        </div>
+        <h4 class="text-lg font-bold mb-1">Dre Butler</h4>
+        <p class="text-xs text-emerald-400 uppercase font-bold mb-3">Smuggler</p>
+        <p class="text-gray-400 text-sm">Runs contraband through Port Llano. Essential for water-based heist logistics and black-market firearms.</p>
+      </div>
+      <div class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/10">
+          <img src="http://static.photos/people/320x240/33" alt="NPC" class="w-full h-full object-cover grayscale" />
+        </div>
+        <h4 class="text-lg font-bold mb-1">Senora Alvarez</h4>
+        <p class="text-xs text-purple-400 uppercase font-bold mb-3">Moneyperson</p>
+        <p class="text-gray-400 text-sm">Launders cash through front businesses across Ambrosia. Your go-to for hiding heat and tax-evading gains.</p>
+      </div>
+      <div class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/10">
+          <img src="http://static.photos/people/320x240/34" alt="NPC" class="w-full h-full object-cover grayscale" />
+        </div>
+        <h4 class="text-lg font-bold mb-1">Boone Castell</h4>
+        <p class="text-xs text-amber-400 uppercase font-bold mb-3">Crew Muscle</p>
+        <p class="text-gray-400 text-sm">A former motor club enforcer who handles the jobs that need brute force over finesse. Old friend of Jason's.</p>
+      </div>
+      <div class="bg-vice-card rounded-xl border border-white/5 p-6 card-hover reveal">
+        <div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/10">
+          <img src="http://static.photos/people/320x240/35" alt="NPC" class="w-full h-full object-cover grayscale" />
+        </div>
+        <h4 class="text-lg font-bold mb-1">Raul Bautista</h4>
+        <p class="text-xs text-cyan-400 uppercase font-bold mb-3">Information Broker</p>
+        <p class="text-gray-400 text-sm">Trades in secrets across Leonida's criminal underworld. Knows which deals are about to go bad before anyone else.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ VEHICLES PAGE ============ -->
+<div class="site-page" id="page-vehicles">
+  <main class="pt-24 pb-24 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-10 reveal">
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-gradient mb-4">Vehicle Database</h1>
+      <p class="text-gray-400 max-w-xl mx-auto">Confirmed rides, leaks, and lore-friendly predictions from the Leonida motor pool.</p>
+    </div>
+
+    <div id="vehicles-filters" class="flex flex-wrap justify-center gap-2 mb-12 reveal">
+      <button data-filter="all" onclick="filterItems('all','vehicles-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-accent text-white transition">All</button>
+      <button data-filter="sports" onclick="filterItems('sports','vehicles-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Sports</button>
+      <button data-filter="suv" onclick="filterItems('suv','vehicles-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">SUV</button>
+      <button data-filter="muscle" onclick="filterItems('muscle','vehicles-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Muscle</button>
+      <button data-filter="bike" onclick="filterItems('bike','vehicles-grid')" class="px-5 py-2 rounded-full text-sm font-bold bg-vice-card text-gray-300 border border-white/10 transition">Bike</button>
+    </div>
+
+    <div id="vehicles-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Sports -->
+      <div data-category="sports" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/51" alt="Sports car" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-vice-accent uppercase">Sports</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Vice GT</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 92%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Handling</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 85%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-category="sports" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/52" alt="Sports car" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-vice-accent uppercase">Sports</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Cheetah Retro</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 88%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Handling</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 80%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUV -->
+      <div data-category="suv" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/53" alt="SUV" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-amber-500 uppercase">SUV</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Landstalker XL</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 60%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Durability</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 90%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-category="suv" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/54" alt="SUV" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-amber-500 uppercase">SUV</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Granger 3600LX</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 68%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Durability</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 85%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Muscle -->
+      <div data-category="muscle" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/55" alt="Muscle" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-red-500 uppercase">Muscle</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Gauntlet Hellfire</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500 rounded-full" style="width: 82%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Torque</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500 rounded-full" style="width: 95%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bike -->
+      <div data-category="bike" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/56" alt="Bike" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-cyan-400 uppercase">Bike</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Defiler MK2</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-cyan-400 rounded-full" style="width: 78%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Handling</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-cyan-400 rounded-full" style="width: 92%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sports -->
+      <div data-category="sports" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/57" alt="Sports" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-vice-accent uppercase">Sports</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Coquette D10</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 90%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Handling</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 88%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-category="muscle" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/58" alt="Muscle" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-red-500 uppercase">Muscle</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Sabre Turbo</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500 rounded-full" style="width: 75%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Torque</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500 rounded-full" style="width: 88%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bike -->
+      <div data-category="bike" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/59" alt="Bike" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-cyan-400 uppercase">Bike</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Vader Custom</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-cyan-400 rounded-full" style="width: 70%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Handling</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-cyan-400 rounded-full" style="width: 95%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUV -->
+      <div data-category="suv" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/60" alt="SUV" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-amber-500 uppercase">SUV</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Patriot Stryder</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 64%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Durability</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 93%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sports -->
+      <div data-category="sports" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/86" alt="Sports car" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-vice-accent uppercase">Sports</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Banshee Evo</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 95%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Handling</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-vice-accent rounded-full" style="width: 82%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Muscle -->
+      <div data-category="muscle" class="bg-vice-card rounded-xl border border-white/5 overflow-hidden card-hover reveal">
+        <div class="h-40 overflow-hidden">
+          <img src="http://static.photos/automotive/640x360/87" alt="Muscle car" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-red-500 uppercase">Muscle</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Stallion Classic</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Speed</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500 rounded-full" style="width: 80%"></div></div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+              <span class="w-16">Torque</span>
+              <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-red-500 rounded-full" style="width: 91%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ GALLERY & LEAKS PAGE ============ -->
+<div class="site-page" id="page-gallery">
+  <main class="pt-24 pb-24 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-gradient mb-4">Gallery & Leaks</h1>
+      <p class="text-gray-400 max-w-xl mx-auto">Live feeds from YouTube, Twitter, and Reddit &mdash; the latest GTA 6 content, screenshots, videos, and community leaks updated in real-time.</p>
+    </div>
+
+    <!-- YouTube Videos Section -->
+    <div class="mb-20 reveal">
+      <h2 class="font-display text-3xl font-bold mb-8 flex items-center gap-3">
+        <i data-lucide="youtube" class="w-8 h-8 text-red-500"></i>
+        Latest YouTube Videos
+      </h2>
+      <p class="text-gray-400 mb-6">Live from YouTube — newest GTA 6 content:</p>
+      <div id="youtube-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-vice-card rounded-xl border border-white/10 p-4 text-center">
+          <div class="animate-pulse">Loading videos...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reddit Posts Section -->
+    <div class="mb-20 reveal">
+      <h2 class="font-display text-3xl font-bold mb-8 flex items-center gap-3">
+        <i data-lucide="users" class="w-8 h-8 text-purple-500"></i>
+        r/GTA6 Latest Posts
+      </h2>
+      <p class="text-gray-400 mb-6">Live from Reddit — community discussions and leaks:</p>
+      <div id="reddit-grid" class="grid md:grid-cols-2 gap-6">
+        <div class="bg-vice-card rounded-xl border border-white/10 p-4 text-center">
+          <div class="animate-pulse">Loading posts...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto-Update Notice -->
+    <div class="mt-16 p-6 bg-vice-accent/10 border border-vice-accent/30 rounded-xl text-center reveal">
+      <p class="text-gray-300">
+        <i data-lucide="zap" class="w-5 h-5 inline text-vice-accent mr-2"></i>
+        <strong>Live feeds update automatically</strong> — No manual refresh needed. Follow <strong>#GTA6</strong> and <strong>#GTALeaks</strong> on Twitter for instant updates.
+      </p>
+    </div>
+  </main>
+</div>
+
+  <!-- Footer (shared across all pages) -->
+  <footer class="border-t border-white/5 bg-vice-card/30 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
+      <div class="col-span-2">
+        <div class="flex items-center gap-2 mb-4">
+          <i data-lucide="gamepad-2" class="w-6 h-6 text-vice-accent"></i>
+          <span class="font-display text-xl font-bold">ALLRASHED</span>
+        </div>
+        <p class="text-gray-400 text-sm max-w-md leading-relaxed">
+          Unofficial fan portal dedicated to Grand Theft Auto 6. Not affiliated with Rockstar Games or Take-Two Interactive. Built for the community.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4 text-white">Explore</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a onclick="showPage('news')" class="cursor-pointer hover:text-white transition">News & Updates</a></li>
+          <li><a onclick="showPage('guides')" class="cursor-pointer hover:text-white transition">Guides</a></li>
+          <li><a onclick="showPage('gallery')" class="cursor-pointer hover:text-white transition">Gallery & Leaks</a></li>
+          <li><a onclick="showPage('map')" class="cursor-pointer hover:text-white transition">Interactive Map</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4 text-white">Database</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a onclick="showPage('characters')" class="cursor-pointer hover:text-white transition">Characters</a></li>
+          <li><a onclick="showPage('vehicles')" class="cursor-pointer hover:text-white transition">Vehicles</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-600">
+      &copy; 2026 AllRashed. All rights reserved. Grand Theft Auto is a trademark of Take-Two Interactive.
+    </div>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+
+  // Mobile menu
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileBtn && mobileMenu) {
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  // Countdown -> GTA VI confirmed release: November 19, 2026
+  const countdownEl = document.getElementById('countdown');
+  if (countdownEl) {
+    const targetDate = new Date('2026-11-19T00:00:00').getTime();
+    const pad = (n) => String(n).padStart(2, '0');
+    const update = () => {
+      const diff = targetDate - Date.now();
+      if (diff <= 0) {
+        countdownEl.innerHTML = '<div class="text-4xl font-display font-bold text-white">AVAILABLE NOW</div>';
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      const parts = [
+        { v: pad(days), l: 'Days' },
+        { v: pad(hours), l: 'Hours' },
+        { v: pad(mins), l: 'Minutes' },
+        { v: pad(secs), l: 'Seconds' },
+      ];
+      countdownEl.innerHTML = parts
+        .map(
+          (p) =>
+            `<div class="flex flex-col items-center"><div class="bg-[#11111a] border border-white/10 rounded-lg px-5 py-4 mb-2 min-w-[90px] md:min-w-[120px] text-center"><span class="font-display text-3xl md:text-5xl font-bold text-white">${p.v}</span></div><span class="text-[10px] md:text-xs uppercase tracking-widest text-gray-500">${p.l}</span></div>`
+        )
+        .join('<div class="text-gray-700 font-display text-2xl md:text-4xl self-start mt-4 md:mt-6">:</div>');
+    };
+    update();
+    setInterval(update, 1000);
+  }
+
+  // Generic filter
+  window.filterItems = (category, sectionId) => {
+    const container = document.getElementById(sectionId);
+    if (!container) return;
+    const items = container.querySelectorAll('[data-category]');
+    items.forEach((item) => {
+      if (category === 'all' || item.dataset.category === category) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+
+    const btnContainer = document.getElementById(sectionId + '-filters');
+    if (btnContainer) {
+      btnContainer.querySelectorAll('button').forEach((b) => {
+        const isActive = b.dataset.filter === category;
+        b.classList.toggle('bg-[#ff2d55]', isActive);
+        b.classList.toggle('text-white', isActive);
+        b.classList.toggle('bg-[#11111a]', !isActive);
+        b.classList.toggle('text-gray-300', !isActive);
+        b.classList.toggle('border', !isActive);
+        b.classList.toggle('border-white/10', !isActive);
+      });
+    }
+  };
+
+  // Map location info
+  window.showMapLocation = (id) => {
+    const panel = document.getElementById('map-info');
+    const data = {
+      'vice-city': {
+        title: 'Vice City',
+        img: 'http://static.photos/cityscape/640x360/81',
+        desc: 'The neon-drenched metropolis inspired by Miami. Expect bustling beaches, a thriving nightlife district, and towering art-deco skylines ripe for cinematic chases.',
+        detail: 'Districts include Downtown high-rises, the Vice Beach boardwalk, and a red-light strip dense with clubs, casinos, and informants. Most early-game missions for both Lucia and Jason are expected to route through here.',
+        tags: ['Urban', 'Beach', 'Nightlife'],
+      },
+      'grassrivers': {
+        title: 'Grassrivers',
+        img: 'http://static.photos/nature/640x360/82',
+        desc: 'Rural wetlands and marshland outskirts where airboats replace supercars. Home to wildlife, backroads, and hidden smuggling operations.',
+        detail: 'Dense cypress swamps, gator-infested canals, and isolated trailer communities. Expect alligator encounters, off-road vehicle traversal, and rural criminal enterprises away from city heat.',
+        tags: ['Rural', 'Swamp', 'Off-road'],
+      },
+      'port-llano': {
+        title: 'Port Llano',
+        img: 'http://static.photos/cityscape/640x360/83',
+        desc: 'Industrial docklands and freight yards. A strategic hub for cargo heists and underworld logistics along the Leonardian coast.',
+        detail: 'Shipping containers, freight cranes, and a working harbor make this the likely staging ground for smuggling and heist setup missions involving boats and cargo trucks.',
+        tags: ['Industrial', 'Docks', 'Heist'],
+      },
+      'leonida-keys': {
+        title: 'Leonida Keys',
+        img: 'http://static.photos/nature/640x360/84',
+        desc: 'A chain of luxury islands featuring opulent mansions, private marinas, and high-security compounds only accessible by boat or air.',
+        detail: 'Crystal-clear water, private docks, and gated estates owned by the wealthy elite. A likely setting for high-stakes heists and end-game property ownership.',
+        tags: ['Luxury', 'Islands', 'Water'],
+      },
+      'ambrosia': {
+        title: 'Ambrosia',
+        img: 'http://static.photos/cityscape/640x360/85',
+        desc: 'Suburban sprawl filled with strip malls, golf courses, and quiet cul-de-sacs that hide their fair share of organized crime.',
+        detail: 'Gated communities, retirement parks, and chain retail strips. Expect front businesses, money-laundering side activities, and a sharp visual contrast to Vice City\'s neon core.',
+        tags: ['Suburban', 'Commercial', 'Golf'],
+      },
+    };
+    const info = data[id];
+    if (panel && info) {
+      panel.innerHTML = `
+        <div class="h-40 -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-5 overflow-hidden rounded-t-2xl">
+          <img src="${info.img}" alt="${info.title}" class="w-full h-full object-cover" />
+        </div>
+        <h3 class="text-2xl md:text-3xl font-bold font-display mb-3 text-gradient">${info.title}</h3>
+        <p class="text-gray-300 mb-4 leading-relaxed">${info.desc}</p>
+        <p class="text-gray-400 text-sm mb-6 leading-relaxed">${info.detail}</p>
+        <div class="flex flex-wrap gap-2 mb-6">
+          ${info.tags.map((t) => `<span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-gray-300">${t}</span>`).join('')}
+        </div>
+        <div class="flex items-center gap-2 text-sm text-[#ff2d55]">
+          <i data-lucide="map-pin" class="w-4 h-4"></i>
+          <span>Region unlocked</span>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+  };
+
+  // Guide search
+  const searchInput = document.getElementById('guide-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.guide-card').forEach((card) => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        card.closest('[data-category]').style.display = title.includes(term) ? 'block' : 'none';
+      });
+    });
+  }
+
+  // Fetch and display Reddit + YouTube content
+  window.loadGalleryContent = async () => {
+    try {
+      const response = await fetch('/.netlify/functions/fetch-content');
+      const data = await response.json();
+
+      if (data.success) {
+        displayYouTubeVideos(data.youtube);
+        displayRedditPosts(data.reddit);
+      }
+    } catch (error) {
+      console.error('Error loading gallery content:', error);
+    }
+  };
+
+  // Display YouTube videos as cards
+  window.displayYouTubeVideos = (videos) => {
+    const container = document.getElementById('youtube-grid');
+    if (!container) return;
+
+    if (!videos || videos.length === 0) {
+      container.innerHTML = '<p class="text-gray-400 col-span-full text-center py-8">No videos found</p>';
+      return;
+    }
+
+    container.innerHTML = videos.map(video => `
+      <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="group bg-vice-card rounded-xl overflow-hidden border border-white/10 card-hover reveal">
+        <div class="relative h-40 overflow-hidden">
+          <img src="${video.thumbnail}" alt="${video.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+          <div class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition flex items-center justify-center">
+            <i data-lucide="play-circle" class="w-12 h-12 text-white opacity-80 group-hover:opacity-100 transition"></i>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-red-500 font-bold uppercase mb-2">YouTube</p>
+          <h3 class="text-sm font-bold text-white line-clamp-2 mb-2 group-hover:text-vice-accent transition">${video.title}</h3>
+          <p class="text-xs text-gray-500">${video.channel}</p>
+          <p class="text-xs text-gray-600 mt-2">${video.published}</p>
+        </div>
+      </a>
+    `).join('');
+
+    lucide.createIcons();
+  };
+
+  // Display Reddit posts as cards
+  window.displayRedditPosts = (posts) => {
+    const container = document.getElementById('reddit-grid');
+    if (!container) return;
+
+    if (!posts || posts.length === 0) {
+      container.innerHTML = '<p class="text-gray-400 col-span-full text-center py-8">No posts found</p>';
+      return;
+    }
+
+    container.innerHTML = posts.map(post => `
+      <a href="${post.url}" target="_blank" rel="noopener noreferrer" class="group bg-vice-card rounded-xl overflow-hidden border border-white/10 card-hover reveal">
+        ${post.image ? `<div class="h-32 overflow-hidden"><img src="${post.image}" alt="" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" /></div>` : ''}
+        <div class="p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20">Reddit</span>
+            <span class="text-xs text-gray-500">${post.created}</span>
+          </div>
+          <h3 class="text-base font-bold text-white line-clamp-2 mb-2 group-hover:text-vice-accent transition">${post.title}</h3>
+          ${post.selftext ? `<p class="text-gray-400 text-sm mb-3 line-clamp-2">${post.selftext}</p>` : ''}
+          <div class="flex items-center justify-between text-xs text-gray-500">
+            <span class="flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 h-3"></i> ${post.score}</span>
+            <span>u/${post.author}</span>
+          </div>
+        </div>
+      </a>
+    `).join('');
+
+    lucide.createIcons();
+  };
+
+  // Single-file page switching
+  window.showPage = (id) => {
+    document.querySelectorAll('.site-page').forEach((p) => p.classList.remove('active'));
+    const target = document.getElementById('page-' + id);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-link').forEach((a) => a.classList.remove('active-link'));
+    const navLink = document.getElementById('nav-' + id);
+    if (navLink) navLink.classList.add('active-link');
+
+    const mobileMenuEl = document.getElementById('mobile-menu');
+    if (mobileMenuEl) mobileMenuEl.classList.add('hidden');
+
+    // Reveal anything in the now-visible page immediately (IntersectionObserver
+    // won't have fired for elements that were display:none on load)
+    if (target) {
+      target.querySelectorAll('.reveal').forEach((el) => el.classList.add('active'));
+    }
+
+    window.scrollTo(0, 0);
+    lucide.createIcons();
+
+    // Load gallery content when gallery page is shown
+    if (id === 'gallery') {
+      loadGalleryContent();
+    }
+  };
+
+  showPage('home');
+});
+</script>
+
+</body>
+</html>
